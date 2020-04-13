@@ -17,10 +17,12 @@ console.log(arr)
 
 const files = require.context('./svg', false, /\.svg$/)
 
-const arr = files.keys().map(key => files(key).default)
+const arr = files.keys().map(key => {
+  return {name: key, content: files(key).default}
+})
 console.log(arr)
 
-const span = document.createElement('span')
-span.innerHTML = arr[0]
-document.body.append(span)
+// const span = document.createElement('span')
+// span.innerHTML = arr[0]
+// document.body.append(span)
 
