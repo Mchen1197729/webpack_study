@@ -1,11 +1,10 @@
 const {resolve} = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-//extract-text-webpack-plugin已经过时了 需要使用mini-css-extract-plugin
-//const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
+//将css文件单独提取到一个文件中而不是通过js生成style标签插入head中
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
@@ -19,14 +18,19 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              esModule: true,
-            },
-          },
+          //这里不是使用style-loader而是使用MiniCssExtractPlugin.loader
+          MiniCssExtractPlugin.loader,
           'css-loader',
+
         ],
+      },
+      {
+        test: /\.less$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'less-loader'
+        ]
       }
     ]
   },
@@ -45,10 +49,9 @@ module.exports = {
         removeRedundantAttributes: true
       }
     }),
+    //将css文件单独提取到一个文件中而不是通过js生成style标签插入head中
     new MiniCssExtractPlugin({
       filename: '[name].css',
-      chunkFilename: '[id].css',
-      ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
   ],
   mode: "development"
